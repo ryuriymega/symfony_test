@@ -1,0 +1,18 @@
+# This file is the entry point to configure your own HTTP routes.
+# Files in the routes/ subdirectory configure the routes for your dependencies.
+
+#index:
+#    path: /
+#    defaults: { _controller: 'App\Controller\DefaultController::index' }
+# config/routes.yaml
+
+# the "app_lucky_number" route name is not important yet
+app_lucky_number:
+    path: /lucky/number
+    controller: App\Controller\LuckyController::number
+add_new_post:    
+    path: /add/newPost
+    controller: App\Controller\AddPost::addNewPost
+del_new_post:    
+    path: /delete/delPosts
+    controller: App\Controller\deletePosts::deletePosts

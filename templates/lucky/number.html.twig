@@ -1,0 +1,142 @@
+{# templates/lucky/number.html.twig #}
+
+{% extends 'base.html.twig' %}
+
+{% block title %}My cool blog posts{% endblock %}
+
+{% block body %}
+
+<!--<h1>Your lucky number is {{ number }}</h1>-->
+
+
+<button style="height:30px;cursor: pointer;" onClick='window.open("../lucky/number","_self");'>Обновить страницу</button>
+
+<div style="margin-top:50px;">
+	<h1>Гостевая книга:</h1>
+</div>
+
+<div>
+	<button style="height:30px;cursor: pointer;" onClick="sendAddPost();">Добавить новый</button>
+	<p>имя: <input type="text" id="userName" name="userName" required minlength="4" maxlength="50" size="10"></p>
+	<p>email: <input type="text" id="email" name="email" required minlength="4" maxlength="50" size="10"></p>
+	<p>Homepage: <input type="text" id="Homepage" name="Homepage" minlength="4" maxlength="150" size="10"></p>
+	<p>текст:</p>
+	<p><textarea rows="10" cols="45" id="postContent" name="postContent"></textarea></p>
+</div>
+	
+<div>
+	<button style="margin-bottom:30px;height:30px;cursor: pointer;" onClick="deleteSelected();">Удалить выбранные записи</button>
+</div>
+
+<table id="example" class="display responsive nowrap" cellspacing="0" width="80%">
+    <thead>
+	<tr>
+		<th>выбрать</th>
+		<th>имя</th>
+		<th>email</th>
+		<th>дата</th>
+		<th>ip-адрес</th>
+		<th>браузер</th>
+		<th>текст</th>
+		<th>Homepage</th>
+	</tr>
+	</thead>
+	<tbody>
+		{% for item in posts %}
+			<tr>
+				<th><input type="checkbox" class="SelectedPosts" value="{{ item.id }}"></th>
+				<th>{{ item.username }}</th>
+				<th>{{ item.email }}</th>
+				<th>{{ item.dateOfPost }}</th>
+				<th>{{ item.ip_addr }}</th>
+				<th>{{ item.browser }}</th>
+				<th class="sorting_1" style="outline: none;">{{ item.postContent }}</th>
+				<th>{{ item.Homepage }}</th>
+			</tr>
+        {% endfor %}
+	</tbody>
+</table>
+ 
+ 
+
+
+
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.js"></script>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.css"/>
+<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.18/datatables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/1.10.19/js/jquery.dataTables.min.js"></script>
+<script type="text/javascript" src="https://cdn.datatables.net/responsive/2.2.3/js/dataTables.responsive.min.js"></script>
+
+
+
+<script>
+	
+    var table;
+    $(document).ready(function() {
+        
+        table = $('#example').DataTable( {
+			"order": [[ 0, "desc" ]],
+            responsive: true,
+            "bProcessing": true,
+            "oLanguage": {            
+                        "sSearch": "",
+                        "sLoadingRecords": "Please wait - loading..."
+            }
+        } );
+    } );
+    
+    function deleteSelected(){
+		x=document.getElementsByClassName("SelectedPosts");
+		countOfSelected=0;
+		for(i=0;i<x.length;i++){
+			if(x[i].checked){
+				countOfSelected++;
+				console.log("Confirmed for selected : "+x[i].value);
+				sendDelete(x[i].value);
+			}
+		}
+		if(countOfSelected==0){
+			window.alert("Выберите записи для удаления");
+		}else{
+			window.alert("Записи удалены");
+			window.open("../lucky/number","_self");
+		}
+	}
+	
+	function sendDelete(id){
+		var data = {
+		};
+		$.post("../delete/delPosts?id="+id,data,function (response){
+			//window.alert(response);
+		});
+	}
+	
+	function isBlank(str) {
+		return (!str || /^\s*$/.test(str));
+	}
+	
+	function sendAddPost(){
+		var data = {
+		};
+		var userName=document.getElementById("userName").value;
+		var email=document.getElementById("email").value;
+		var Homepage=document.getElementById("Homepage").value;
+		var postContent=document.getElementById("postContent").value;
+		
+		if(
+			(isBlank(userName))
+				||
+			(isBlank(email))
+				||
+			(isBlank(postContent))
+		){
+			window.alert("имя, email и текст должны быть заполнены.");
+		}else{		
+			$.post("../add/newPost?userName="+userName+"&email="+email+"&postContent="+postContent+"&Homepage="+Homepage,data,function (response){
+				window.alert(response);
+			});
+		}
+	}
+</script>  
+{% endblock %}
+
